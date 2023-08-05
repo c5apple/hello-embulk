@@ -1,0 +1,70 @@
+version: '3'
+services:
+    input1:
+        container_name: input1
+        # image: mariadb
+        # image: mysql:8.0
+        image: mysql/mysql-server:8.0
+        platform: linux/arm64
+        command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --port=3306
+        # restart: always
+        volumes:
+          - ./docker/db/input1/data:/var/lib/mysql
+          - ./docker/db/input1/initdb.d:/docker-entrypoint-initdb.d
+          - ./docker/db/input1/my.cnf:/etc/mysql/conf.d/my.cnf
+          - ./docker/db/input1/logs:/var/log/mysql
+        ports:
+          - 3306:3306
+        # env_file: .env
+        environment:
+          MYSQL_DATABASE: input1
+          # MARIADB_ROOT_PASSWORD: password
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_ROOT_HOST: '%' # 実際はダメ
+          TZ: Asia/Tokyo
+    input2:
+        container_name: input2
+        # image: mariadb
+        # image: mysql:8.0
+        image: mysql/mysql-server:8.0
+        platform: linux/arm64
+        command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --port=3307
+        # restart: always
+        volumes:
+          - ./docker/db/input2/data:/var/lib/mysql
+          - ./docker/db/input2/initdb.d:/docker-entrypoint-initdb.d
+          - ./docker/db/input2/my.cnf:/etc/mysql/conf.d/my.cnf
+          - ./docker/db/input2/logs:/var/log/mysql
+        ports:
+          - 3307:3306
+        environment:
+          MYSQL_DATABASE: input2
+          # MARIADB_ROOT_PASSWORD: password
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_ROOT_HOST: '%' # 実際はダメ
+          TZ: Asia/Tokyo
+    output:
+        container_name: output
+        # image: mariadb
+        # image: mysql:8.0
+        image: mysql/mysql-server:8.0
+        platform: linux/arm64
+        command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --port=3308
+        # restart: always
+        volumes:
+          - ./docker/db/output/data:/var/lib/mysql
+          - ./docker/db/output/initdb.d:/docker-entrypoint-initdb.d
+          - ./docker/db/output/my.cnf:/etc/mysql/conf.d/my.cnf
+          - ./docker/db/output/logs:/var/log/mysql
+        ports:
+          - 3308:3306
+        environment:
+          MYSQL_DATABASE: output
+          # MARIADB_ROOT_PASSWORD: password
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_ROOT_HOST: '%' # 実際はダメ
+          TZ: Asia/Tokyo
+    embulk:
+        container_name: embulk
+        build: ./docker/embulk
+        tty: true
